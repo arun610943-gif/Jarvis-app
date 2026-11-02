@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>J.A.R.V.I.S. Standalone App</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body {
+            background-color: #050b14;
+            color: #00ffff;
+            font-family: 'Courier New', Courier, monospace;
+            text-align: center;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+        h2 {
+            color: #ff3333;
+            text-shadow: 0 0 10px #ff0000;
+            letter-spacing: 2px;
+            margin-bottom: 5px;
+        }
+        p {
+            color: #88ccff;
+            font-size: 13px;
+            margin-bottom: 25px;
+        }
+        .mic-container {
+            width: 130px;
+            height: 130px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: radial-gradient(circle, rgba(0,255,255,0.2) 0%, rgba(5,11,20,1) 70%);
+            border-radius: 50%;
+            border: 2px dashed #00ffff;
+            box-shadow: 0 0 25px rgba(0,255,255,0.4);
+            cursor: pointer;
+            margin-bottom: 25px;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0% { box-shadow: 0 0 15px rgba(0,255,255,0.4); }
+            50% { box-shadow: 0 0 35px rgba(0,255,255,0.8); }
+            100% { box-shadow: 0 0 15px rgba(0,255,255,0.4); }
+        }
+        .mic-btn {
+            background: linear-gradient(135deg, #ff416c, #ff4b2b);
+            color: white;
+            border: none;
+            width: 80px;
+            height: 80px;
+            font-size: 32px;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 0 20px #ff3333;
+        }
+        .btn-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            width: 100%;
+            max-width: 320px;
+        }
+        .action-btn {
+            background: rgba(0, 255, 255, 0.1);
+            color: #00ffff;
+            border: 1px solid #00ffff;
+            padding: 12px;
+            font-size: 13px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: 'Courier New', Courier, monospace;
+            box-shadow: 0 0 8px rgba(0,255,255,0.2);
+        }
+        .action-btn:active {
+            background: #00ffff;
+            color: #050b14;
+        }
+        #status {
+            font-size: 14px;
+            margin-top: 25px;
+            color: #00ff66;
+            text-shadow: 0 0 5px #00ff66;
+            min-height: 25px;
+        }
+    </style>
+</head>
+<body>
+    <h2>J.A.R.V.I.S. DIRECT</h2>
+    <p>Standalone App Mode Active, Sir</p>
+    
+    <div class="mic-container" onclick="startListening()">
+        <button class="mic-btn">🎤</button>
+    </div>
+    
+    <div class="btn-grid">
+        <button class="action-btn" onclick="openYouTube()">▶ YouTube App</button>
+        <button class="action-btn" onclick="openInstagram()">📷 Instagram</button>
+        <button class="action-btn" onclick="openDialer()">📞 Dialer</button>
+        <button class="action-btn" onclick="openWebsite()">🌐 Google</button>
+    </div>
+    
+    <div id="status">Status: Standby, Sir</div>
+
+    <script>
+        function openYouTube(query = "") {
+            document.getElementById("status").innerText = "Opening YouTube App...";
+            if (query) {
+                // सीधे YouTube ऐप के अंदर सर्च ट्रिगर करेगा
+                window.location.href = "intent://www.youtube.com/results?search_query=" + encodeURIComponent(query) + "#Intent;package=com.google.android.youtube;scheme=https;end;";
+            } else {
+                window.location.href = "intent://#Intent;package=com.google.android.youtube;end;";
+            }
+        }
+
+        function openInstagram() {
+            document.getElementById("status").innerText = "Opening Instagram...";
+            window.location.href = "intent://#Intent;package=com.instagram.android;end;";
+        }
+
+        function openDialer() {
+            document.getElementById("status").innerText = "Opening Dialer...";
+            window.location.href = "tel:";
+        }
+
+        function openWebsite() {
+            window.location.href = "https://www.google.com";
+        }
+
+        function startListening() {
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            if (!SpeechRecognition) {
+                alert("Speech recognition not supported!");
+                return;
+            }
+            const recognition = new SpeechRecognition();
+            recognition.lang = 'en-US';
+            
+            document.getElementById("status").innerText = "Status: Listening, Sir...";
+            
+            recognition.onresult = function(event) {
+                let text = event.results[0][0].transcript.toLowerCase();
+                document.getElementById("status").innerText = "Heard: " + text;
+                
+                if (text.includes("play") || text.includes("song") || text.includes("youtube")) {
+                    let song = text.replace("youtube", "").replace("play", "").replace("song", "").replace("on", "").trim();
+                    openYouTube(song);
+                } else if (text.includes("instagram")) {
+                    openInstagram();
+                } else if (text.includes("call") || text.includes("dialer")) {
+                    openDialer();
+                } else {
+                    openYouTube(text);
+                }
+            };
+            
+            recognition.start();
+        }
+    </script>
+</body>
+</html>
