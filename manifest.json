@@ -1,18 +1,14 @@
+
 {
-  "name": "Jarvis",
-  "short_name": "Jarvis",
-  "start_url": "./index.html",
+  "background_color": "#000000",
+  "dir": "ltr",
   "display": "standalone",
-  "background_color": "#050b14",
-  "theme_color": "#050b14",
-  "description": "My personal Jarvis voice assistant app",
-  "icons": [
-    {
-      "src": "https://raw.githubusercontent.com/arun610943-git/Jarvis-app/main/index.html",
-      "sizes": "192x192",
-      "type": "image/png"
-    }
-  ]
+  "name": "Jarvis",
+  "orientation": "any",
+  "scope": "/",
+  "short_name": "Jarvis",
+  "start_url": "/",
+  "theme_color": "#000000",
+  "id": "Jarvis ",
+  "description": "My personal Jarvis voice assistant"
 }
-
-
